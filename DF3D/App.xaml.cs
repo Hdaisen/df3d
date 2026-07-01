@@ -1,8 +1,10 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using DF3D.Helpers;
 using DF3D.Services;
 using DF3D.Windows;
+using H.NotifyIcon;
 
 namespace DF3D;
 
@@ -16,6 +18,7 @@ public partial class App : Application
     private MonitorService _monitorService = null!;
     private TrayIconService _trayIconService = null!;
 
+    private TaskbarIcon? _taskbarIcon;
     private OverlayWindow? _overlayWindow;
     private SettingsWindow? _settingsWindow;
 
@@ -41,13 +44,8 @@ public partial class App : Application
         _monitorService = new MonitorService();
         _trayIconService = new TrayIconService();
 
-        // Initialize tray icon
-        var trayIcon = (H.NotifyIcon.TaskbarIcon)FindResource("TrayIcon");
-        trayIcon.ForceCreate(); // Ensure the tray icon is created before use
-        _trayIconService.Initialize(trayIcon);
-
-        // Set initial tray menu state
-        UpdateTrayMenuState();
+        // Create tray icon programmatically
+        CreateTrayIcon();
 
         // Create and show the overlay window
         _overlayWindow = new OverlayWindow(
@@ -63,48 +61,85 @@ public partial class App : Application
         {
             _overlayWindow.Show();
         }
+    }
 
-        // Delay notification to ensure tray icon is fully ready
-        Dispatcher.BeginInvoke(() =>
+    private void CreateTrayIcon()
+    {
+        _taskbarIcon = new TaskbarIcon();
+
+        // Load icon from embedded resource
+        try
         {
-            try { _trayIconService.ShowNotification("DF3D", "已启动，可在托盘图标中管理。", 2000); }
-            catch { /* Tray icon may not be ready yet */ }
-        }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            var iconUri = new Uri("pack://application:,,,/Resources/Assets/tray-icon.ico", UriKind.Absolute);
+            var iconStream = GetResourceStream(iconUri)?.Stream;
+            if (iconStream != null)
+            {
+                _taskbarIcon.Icon = new System.Drawing.Icon(iconStream);
+            }
+            else
+            {
+                // Fallback: use system icon
+                _taskbarIcon.Icon = System.Drawing.SystemIcons.Application;
+            }
+        }
+        catch
+        {
+            _taskbarIcon.Icon = System.Drawing.SystemIcons.Application;
+        }
+
+        _taskbarIcon.ToolTipText = "DF3D - 3D 晕动症缓解工具";
+
+        // Build context menu
+        var menu = new ContextMenu();
+
+        var showSettingsItem = new MenuItem { Header = "打开设置" };
+        showSettingsItem.Click += (_, _) => ShowSettingsWindow();
+        menu.Items.Add(showSettingsItem);
+
+        menu.Items.Add(new Separator());
+
+        var overlayItem = new MenuItem
+        {
+            Header = _settingsService.Settings.Overlay.IsVisible ? "✅ 叠加层" : "⬜ 叠加层"
+        };
+        overlayItem.Click += (_, _) =>
+        {
+            var s = _settingsService.Settings.Overlay;
+            s.IsVisible = !s.IsVisible;
+            _settingsService.Save();
+            overlayItem.Header = s.IsVisible ? "✅ 叠加层" : "⬜ 叠加层";
+        };
+        menu.Items.Add(overlayItem);
+
+        var crosshairItem = new MenuItem
+        {
+            Header = _settingsService.Settings.Crosshair.IsVisible ? "✅ 十字线" : "⬜ 十字线"
+        };
+        crosshairItem.Click += (_, _) =>
+        {
+            var s = _settingsService.Settings.Crosshair;
+            s.IsVisible = !s.IsVisible;
+            _settingsService.Save();
+            crosshairItem.Header = s.IsVisible ? "✅ 十字线" : "⬜ 十字线";
+        };
+        menu.Items.Add(crosshairItem);
+
+        menu.Items.Add(new Separator());
+
+        var exitItem = new MenuItem { Header = "退出" };
+        exitItem.Click += (_, _) => PerformShutdown();
+        menu.Items.Add(exitItem);
+
+        _taskbarIcon.ContextMenu = menu;
+
+        // Double-click to show settings
+        _taskbarIcon.DoubleClickCommand = new RelayCommand(() => ShowSettingsWindow());
+
+        // Initialize (show the icon)
+        _taskbarIcon.ForceCreate();
+
+        _trayIconService.Initialize(_taskbarIcon);
     }
-
-    #region Tray Menu Handlers
-
-    private void OnTrayShowSettings(object sender, RoutedEventArgs e)
-    {
-        ShowSettingsWindow();
-    }
-
-    private void OnTrayToggleOverlay(object sender, RoutedEventArgs e)
-    {
-        var s = _settingsService.Settings.Overlay;
-        s.IsVisible = !s.IsVisible;
-        _settingsService.Save();
-        UpdateTrayMenuState();
-        _trayIconService.ShowNotification("DF3D",
-            s.IsVisible ? "叠加层已显示" : "叠加层已隐藏", 1500);
-    }
-
-    private void OnTrayToggleCrosshair(object sender, RoutedEventArgs e)
-    {
-        var s = _settingsService.Settings.Crosshair;
-        s.IsVisible = !s.IsVisible;
-        _settingsService.Save();
-        UpdateTrayMenuState();
-        _trayIconService.ShowNotification("DF3D",
-            s.IsVisible ? "十字线已显示" : "十字线已隐藏", 1500);
-    }
-
-    private void OnTrayExit(object sender, RoutedEventArgs e)
-    {
-        PerformShutdown();
-    }
-
-    #endregion
 
     private void ShowSettingsWindow()
     {
@@ -119,21 +154,6 @@ public partial class App : Application
         _settingsWindow.Activate();
     }
 
-    private void UpdateTrayMenuState()
-    {
-        if (FindResource("TrayIcon") is H.NotifyIcon.TaskbarIcon trayIcon &&
-            trayIcon.ContextMenu is { } menu)
-        {
-            var overlayItem = menu.Items[2] as MenuItem;  // TrayMenuOverlay
-            var crosshairItem = menu.Items[3] as MenuItem; // TrayMenuCrosshair
-
-            if (overlayItem is not null)
-                overlayItem.Header = _settingsService.Settings.Overlay.IsVisible ? "✅ 叠加层" : "⬜ 叠加层";
-            if (crosshairItem is not null)
-                crosshairItem.Header = _settingsService.Settings.Crosshair.IsVisible ? "✅ 十字线" : "⬜ 十字线";
-        }
-    }
-
     private void PerformShutdown()
     {
         // Save settings immediately
@@ -144,6 +164,7 @@ public partial class App : Application
         _topmostService.Dispose();
         _monitorService.Dispose();
         _trayIconService.Dispose();
+        _taskbarIcon?.Dispose();
         _singleInstance?.Dispose();
 
         // Close windows
@@ -152,4 +173,18 @@ public partial class App : Application
 
         Shutdown();
     }
+}
+
+/// <summary>
+/// Simple relay command for tray icon double-click.
+/// </summary>
+public class RelayCommand : System.Windows.Input.ICommand
+{
+    private readonly Action _execute;
+
+    public RelayCommand(Action execute) => _execute = execute;
+
+    public event EventHandler? CanExecuteChanged;
+    public bool CanExecute(object? parameter) => true;
+    public void Execute(object? parameter) => _execute();
 }
