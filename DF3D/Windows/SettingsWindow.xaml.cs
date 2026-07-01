@@ -322,7 +322,6 @@ public partial class SettingsWindow : Window
         _settingsService.Settings.SettingsWindowTop = (int)Top;
         _settingsService.Save();
 
-        // Minimize to tray instead of closing (handled in App.xaml.cs)
         base.OnClosing(e);
     }
 

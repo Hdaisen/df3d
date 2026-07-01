@@ -172,15 +172,23 @@ public partial class App : Application
 
     private void ShowSettingsWindow()
     {
-        if (_settingsWindow is { IsVisible: true })
+        try
         {
-            _settingsWindow.Activate();
-            return;
-        }
+            if (_settingsWindow is { IsVisible: true })
+            {
+                _settingsWindow.Activate();
+                return;
+            }
 
-        _settingsWindow = new SettingsWindow(_settingsService, _profileService);
-        _settingsWindow.Show();
-        _settingsWindow.Activate();
+            _settingsWindow = new SettingsWindow(_settingsService, _profileService);
+            _settingsWindow.Show();
+            _settingsWindow.Activate();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.ToString(), "DF3D - ShowSettingsWindow 错误",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void PerformShutdown()
