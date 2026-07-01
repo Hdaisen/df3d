@@ -119,8 +119,7 @@
         </Border>
 
         <!-- Tab control area -->
-        <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0"
-                    SelectedIndex="{Binding SelectedTab}">
+        <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0">
 
             <!-- ====== Overlay Tab ====== -->
             <TabItem Header="  🎭 叠加层  ">

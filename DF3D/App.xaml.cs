@@ -22,6 +22,31 @@ public partial class App : Application
     private OverlayWindow? _overlayWindow;
     private SettingsWindow? _settingsWindow;
 
+    public App()
+    {
+        // Global exception handler
+        DispatcherUnhandledException += (_, e) =>
+        {
+            MessageBox.Show(e.Exception.ToString(), "DF3D 未处理异常",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            e.Handled = true;
+        };
+
+        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+        {
+            var ex = e.ExceptionObject as Exception;
+            MessageBox.Show(ex?.ToString() ?? "Unknown error", "DF3D 域异常",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        };
+
+        TaskScheduler.UnobservedTaskException += (_, e) =>
+        {
+            MessageBox.Show(e.Exception.ToString(), "DF3D 任务异常",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            e.SetObserved();
+        };
+    }
+
     private void OnStartup(object sender, StartupEventArgs e)
     {
         // Single instance check
@@ -93,7 +118,11 @@ public partial class App : Application
         var menu = new ContextMenu();
 
         var showSettingsItem = new MenuItem { Header = "打开设置" };
-        showSettingsItem.Click += (_, _) => ShowSettingsWindow();
+        showSettingsItem.Click += (_, _) =>
+        {
+            try { ShowSettingsWindow(); }
+            catch (Exception ex) { MessageBox.Show(ex.ToString(), "DF3D 错误", MessageBoxButton.OK, MessageBoxImage.Error); }
+        };
         menu.Items.Add(showSettingsItem);
 
         menu.Items.Add(new Separator());
