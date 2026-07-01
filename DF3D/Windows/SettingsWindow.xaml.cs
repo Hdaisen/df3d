@@ -341,29 +341,35 @@ public class InputDialog : Window
 {
     public string InputText { get; private set; } = "";
 
+    // Hardcoded colors (same palette as SettingsWindow, but local to avoid FindResource failures)
+    private static readonly System.Windows.Media.SolidColorBrush BgDark = new(System.Windows.Media.Color.FromRgb(24, 24, 37));
+    private static readonly System.Windows.Media.SolidColorBrush BgCard = new(System.Windows.Media.Color.FromRgb(49, 50, 68));
+    private static readonly System.Windows.Media.SolidColorBrush TextPrimary = new(System.Windows.Media.Color.FromRgb(205, 214, 244));
+    private static readonly System.Windows.Media.SolidColorBrush Border = new(System.Windows.Media.Color.FromRgb(69, 71, 90));
+
     public InputDialog(Window owner, string title, string prompt, string defaultValue = "")
     {
         Title = title;
         Width = 350;
         Height = 160;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = (System.Windows.Media.Brush)FindResource("BgDark");
+        Background = BgDark;
         ResizeMode = ResizeMode.NoResize;
 
         var stack = new StackPanel { Margin = new Thickness(16) };
         stack.Children.Add(new TextBlock
         {
             Text = prompt,
-            Foreground = (System.Windows.Media.Brush)FindResource("TextPrimary"),
+            Foreground = TextPrimary,
             Margin = new Thickness(0, 0, 0, 8)
         });
 
         var textBox = new TextBox
         {
             Text = defaultValue,
-            Background = (System.Windows.Media.Brush)FindResource("BgCard"),
-            Foreground = (System.Windows.Media.Brush)FindResource("TextPrimary"),
-            BorderBrush = (System.Windows.Media.Brush)FindResource("Border"),
+            Background = BgCard,
+            Foreground = TextPrimary,
+            BorderBrush = Border,
             Padding = new Thickness(6, 4, 6, 4),
             Margin = new Thickness(0, 0, 0, 12)
         };
