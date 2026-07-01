@@ -43,6 +43,7 @@ public partial class App : Application
 
         // Initialize tray icon
         var trayIcon = (H.NotifyIcon.TaskbarIcon)FindResource("TrayIcon");
+        trayIcon.ForceCreate(); // Ensure the tray icon is created before use
         _trayIconService.Initialize(trayIcon);
 
         // Set initial tray menu state
@@ -63,7 +64,12 @@ public partial class App : Application
             _overlayWindow.Show();
         }
 
-        _trayIconService.ShowNotification("DF3D", "已启动，可在托盘图标中管理。", 2000);
+        // Delay notification to ensure tray icon is fully ready
+        Dispatcher.BeginInvoke(() =>
+        {
+            try { _trayIconService.ShowNotification("DF3D", "已启动，可在托盘图标中管理。", 2000); }
+            catch { /* Tray icon may not be ready yet */ }
+        }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
     }
 
     #region Tray Menu Handlers

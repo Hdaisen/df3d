@@ -8,8 +8,7 @@
         Topmost="True"
         ShowInTaskbar="False"
         ShowActivated="False"
-        ResizeMode="NoResize"
-        WindowState="Maximized">
+        ResizeMode="NoResize">
 
     <Grid>
         <controls:VignetteControl x:Name="Vignette" />

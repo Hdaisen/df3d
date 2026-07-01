@@ -32,6 +32,12 @@ public partial class OverlayWindow : Window
 
         InitializeComponent();
 
+        // Set initial window position to cover the entire primary screen
+        Left = 0;
+        Top = 0;
+        Width = SystemParameters.PrimaryScreenWidth;
+        Height = SystemParameters.PrimaryScreenHeight;
+
         // Wire up settings changes to re-render
         _settingsService.SettingsChanged += OnSettingsChanged;
         _settingsService.Settings.Overlay.PropertyChanged += (_, _) => ApplyOverlaySettings();
