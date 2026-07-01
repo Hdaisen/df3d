@@ -1,0 +1,95 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "DF3D/1.0.0": {
+        "dependencies": {
+          "H.NotifyIcon.Wpf": "2.1.4"
+        },
+        "runtime": {
+          "DF3D.dll": {}
+        }
+      },
+      "H.GeneratedIcons.System.Drawing/2.1.4": {
+        "dependencies": {
+          "System.Drawing.Common": "8.0.10"
+        },
+        "runtime": {
+          "lib/net8.0/H.GeneratedIcons.System.Drawing.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.1.4.0"
+          }
+        }
+      },
+      "H.NotifyIcon/2.1.4": {
+        "dependencies": {
+          "H.GeneratedIcons.System.Drawing": "2.1.4"
+        },
+        "runtime": {
+          "lib/net8.0/H.NotifyIcon.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.1.4.0"
+          }
+        }
+      },
+      "H.NotifyIcon.Wpf/2.1.4": {
+        "dependencies": {
+          "H.NotifyIcon": "2.1.4"
+        },
+        "runtime": {
+          "lib/net8.0-windows7.0/H.NotifyIcon.Wpf.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.1.4.0"
+          }
+        }
+      },
+      "System.Drawing.Common/8.0.10": {
+        "runtime": {
+          "lib/net8.0/System.Drawing.Common.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.1024.46803"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "DF3D/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "H.GeneratedIcons.System.Drawing/2.1.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MjW8AmrbVHnFl17WzTqVA0LvUcgKtV/1gL04fTQdYgHotrjkz9Q8mgDxtrxevPCYE8SGvQBrKTPttCwkS1zsMw==",
+      "path": "h.generatedicons.system.drawing/2.1.4",
+      "hashPath": "h.generatedicons.system.drawing.2.1.4.nupkg.sha512"
+    },
+    "H.NotifyIcon/2.1.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-puxd5k0RQQilmIReQZjz+lyJWWmko/WWYkNbEUpqymPXZsCv9ILrhdz1j6YARR1OJCl9RWykV7WWvxYJRsVdMw==",
+      "path": "h.notifyicon/2.1.4",
+      "hashPath": "h.notifyicon.2.1.4.nupkg.sha512"
+    },
+    "H.NotifyIcon.Wpf/2.1.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-JXwEhOXo8smlx6p4SjbxRQ8C0WDDgm2j/3nitA9yeksY3kTaMADL34zxaheQM0Qbf9efoaV2PTC7DXjNaBUHXA==",
+      "path": "h.notifyicon.wpf/2.1.4",
+      "hashPath": "h.notifyicon.wpf.2.1.4.nupkg.sha512"
+    },
+    "System.Drawing.Common/8.0.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MdajRp3P+FOlThgY6FBjAqnmLiVl5t2yWEC/2AsDMqx1zYbJG3G5TnscFBQ4obqcaGqvN5UnhQHSFaJFG2HftQ==",
+      "path": "system.drawing.common/8.0.10",
+      "hashPath": "system.drawing.common.8.0.10.nupkg.sha512"
+    }
+  }
+}
